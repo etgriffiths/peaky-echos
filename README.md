@@ -10,5 +10,7 @@ The functions presented can be used to replicate the decision tree and spectra t
 This workflow uses functions from the PamBinaries and PAMpal R packages to extract binary information per click, and ICES standards for measuring underwater noise.
 
 https://github.com/TaikiSan21/PamBinaries
+
 https://taikisan21.github.io/PAMpal/
+
 https://github.com/ices-tools-prod/underwaternoise
