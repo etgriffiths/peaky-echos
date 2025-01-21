@@ -2,7 +2,9 @@
 Workflow for the detection and categorization of dolphin echolocation with peaks and notches present in their spectrum.
 
 Emily T. Griffiths
+
 emilytgrifffiths@ecos.au.dk
+
 2025
 
 The functions presented can be used to replicate the decision tree and spectra template development used to discern and categorize white-beaked dolphins from other dolphins and noise in Skagerrak in 2021. Paper forthcoming. 
