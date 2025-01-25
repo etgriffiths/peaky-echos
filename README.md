@@ -5,7 +5,7 @@ Emily T. Griffiths
 emilytgrifffiths@ecos.au.dk
 2025
 
-The functions presented can be used to replicate the decision tree and spectra template development used to discern and categorize white-beaked dolphins from other dolphins and noise in Skagerrak in 2021. Paper forthcoming. 
+The functions and example script presented can be used to replicate the decision tree and spectra template development used to discern and categorize white-beaked dolphins from other dolphins and noise in Skagerrak in 2021. Paper forthcoming. Parameters for template used in the paper included within the RDA file.
 
 This workflow uses functions from the PamBinaries and PAMpal R packages to extract binary information per click, and ICES standards for measuring underwater noise.
 
