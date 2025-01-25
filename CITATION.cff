@@ -1,8 +1,8 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
 authors:
-- family-names: "Emily T."
-  given-names: "Griffiths"
+- family-names: "Griffiths"
+  given-names: "Emily T."
   orcid: "https://orcid.org/0000-0002-0781-6091"
 title: "Peaky Echos"
 version: 1.0
