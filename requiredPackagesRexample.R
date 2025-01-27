@@ -43,7 +43,7 @@ step2=organizeEvents(path, eventsdf) #Extract binary information per event from 
 # Decidecade noise levels are calculated using scripts found
 # in https://github.com/ices-tools-prod/underwaternoise.
 
-meanBB= 1.28498106978208e-07  # raw value
+meanBB= 1.28498106978208e-07  # raw broadband 10 Hz - 10 kHz noise value, averaged for the entire event duration. 
 clipLevel= 175 #dB
 f=384000 # Sample rate
 loudThres=10*log10(meanBB)+clipLevel+40  #40 dB buffer is adjustable.
