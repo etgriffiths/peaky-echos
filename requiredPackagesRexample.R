@@ -24,8 +24,8 @@ library(seewave)
 library(RSQLite)
 library(spectral)
 
-source("./_peaky-echos/decisionTree.R")
-source("./_peaky-echos/organizeEvents.R")
+source("./peaky-echos/decisionTree.R")
+source("./peaky-echos/organizeEvents.R")
 
 path='C:/yourPath'
 step1=decisionTree(path)  #Find dolphin events
@@ -93,8 +93,8 @@ step3 =list(strongMD, strongWaveform)
 
 #Remove excess variables
 rm(list=setdiff(ls(), c('path','step1','step2','step3')))
-source("./_peaky-echos/ttsplit.R")
-source("./_peaky-echos/concatWav.R")
+source("./peaky-echos/ttsplit.R")
+source("./peaky-echos/concatWav.R")
 
 step4 = ttsplit(step3,0.35)  # Split data into training and testing datasets.
 
@@ -150,10 +150,10 @@ interp_output<- approx(x=ssp, n=length(sintemp$y))
 cor.test(interp_output$y, sintemp$y, method = 'pearson')
 
 # Save your template to import as need be.
-save(co, sintemp,fit,res, file='./_peaky-echos/templateInfo.rda')
+save(co, sintemp,fit,res, file='./peaky-echos/templateInfo.rda')
 rm(list=setdiff(ls(), c('path', 'step4', 'concatWav', 'f', 'bit')))
 
-load('./_peaky-echos/templateInfo.rda')
+load('./peaky-echos/templateInfo.rda')
 
 eventID = names(step4$Waveforms$Testing)
 
