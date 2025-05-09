@@ -48,15 +48,18 @@ organizeEvents=function(binaryPath, eventsdf) {
   bindf$name=basename(binC)
   bindf$datetime=as.POSIXct(gsub("[^\\d]+", "\\1",  bindf$name, perl = TRUE), format ='%Y%m%d%H%M%S', tz='UTC')
   
+  EvWaveData=list()
+  EvClckData=NULL
+  
   for (ev in 1:nrow(eventsdf)) {
     dateRange <- seq(eventsdf[ev,2], eventsdf[ev,3], by="sec")
     
     #Which Bins
     mn=min(abs(difftime(bindf$datetime, min(dateRange))))
-    mnDt=which(abs(difftime(bindf$datetime, min(dateRange)))==mn)
+    mnDt=min(which(abs(difftime(bindf$datetime, min(dateRange)))==mn))
     
     mx=min(abs(difftime(bindf$datetime, max(dateRange))))
-    mxDt=which(abs(difftime(bindf$datetime, max(dateRange)))==mx)
+    mxDt=max(which(abs(difftime(bindf$datetime, max(dateRange)))==mx))
     
     dtidx=seq(mnDt, mxDt,by=1)
     # Include one extra bin on either side, unless it is the start or the end of the binary list. 
@@ -65,11 +68,10 @@ organizeEvents=function(binaryPath, eventsdf) {
     
     eventBins = binC[dtidx]  
     
-    EvWaveData=list()
     wavData=list()
-    EvClckData=NULL
+    binClickD=NULL
     for (b in 1:length(eventBins)){
-      binList=loadPamguardBinaryFile(binC[b])
+      binList=loadPamguardBinaryFile(eventBins[b])
       
       # Subset to event times
       realDates=lapply(binList$data, function(x) as.POSIXct((x$millis/1000), origin = '1970-01-01', tz = 'UTC'))
@@ -101,16 +103,16 @@ organizeEvents=function(binaryPath, eventsdf) {
       clickData$datetime=as.POSIXct((clickData$millis/1000), origin = '1970-01-01', tz = 'UTC')
       clickData$eventID = paste0('Event_',eventsdf[ev,1])
       
-      EvClckData=rbind(EvClckData, clickData)
+      binClickD=rbind(binClickD, clickData)
       
     }
     EvWaveData[[ev]]=wavData
-    
-    evtsnms = unique(EvClckData$eventID)
-    
-    names(EvWaveData)=evtsnms
+    EvClckData=rbind(EvClckData, binClickD)
   }
+
+  evtsnms = unique(EvClckData$eventID)
   
+  names(EvWaveData)=evtsnms
   results = list(EvClckData, EvWaveData)
   
   return(results)

@@ -69,6 +69,7 @@ decisionTree=function(binaryPath, interval, trainMin, perPosID, whistleMin, clic
     
     #Load in click binary file
     binList=loadPamguardBinaryFile(binC[b])
+    if (length(binList$data)==0) {next}
     
     # Isolate click metadata from waveform and annotation data.
     clickData = NULL
@@ -103,9 +104,20 @@ decisionTree=function(binaryPath, interval, trainMin, perPosID, whistleMin, clic
     
     # How many clicks were classified, and how many were not.
     myData = groupedSecs[groupedSecs$dateSec %in% candidates,]
-    if (nrow(myData)==0) {next}
+    if (nrow(myData)==0) {next} #skip if there are no candidates
+   
     dat1=dcast(myData, dateSec ~type)
-    names(dat1)=c('dateSec','No', 'Yes')
+    if (!('1' %in% colnames(dat1))) {next} #skip if there are no positive clicks.
+    names(dat1)[names(dat1) == "0"] <- "No"
+    names(dat1)[names(dat1) == "1"] <- "Yes"
+    
+    missing=setdiff( c('dateSec','No','Yes'),colnames(dat1))
+    if (!length(missing)==0) {
+      dat1$No=NA
+      dat1=dat1[,c('dateSec','No','Yes')]
+    }
+    dat1$totalClicks = rowSums(dat1[,c("No","Yes")], na.rm=TRUE)
+    
     dat1$totalClicks = rowSums(dat1[,c("No","Yes")], na.rm=TRUE)
     # Get the percentage of clicks positively classified.
     dat1$PerPos=dat1$Yes/dat1$totalClicks
@@ -128,11 +140,11 @@ decisionTree=function(binaryPath, interval, trainMin, perPosID, whistleMin, clic
   
   binBP=list.files(binaryPath, pattern = glob2rx('*Whistle_and_Moan*.pgdf'), recursive = TRUE, full.names = TRUE)  #The regex will need to change if you have altered the name of the detector in PG.
   
-  #Exctract BP counts
+  #Extract BP counts
   bpEvents=NULL
   for (b in 1:length(binBP)){
     binList=loadPamguardBinaryFile(binBP[b])
-    
+    if (length(binList$data)==0) {next}
     bpData = NULL
     for (wh in 1:length(binList$data)){
       data = as.data.frame(within(binList$data[[wh]],rm(sliceData, contour, contWidth, annotations)))
@@ -152,7 +164,7 @@ decisionTree=function(binaryPath, interval, trainMin, perPosID, whistleMin, clic
   }
   
   #Merge datasets.
-  allDetections=merge(clickEvents,bpEvents, by = c('dateSec', 'datetime'), all = TRUE)
+  allDetections=merge(clickEvents,bpEvents, by = c('dateSec', 'datetime'), all.x = T)
   
   # Apply last decision tree branch
   powerEvs = allDetections[allDetections$PerPos >=clickOnlyConf | allDetections$burstPulse >= whistleMin,]
@@ -176,6 +188,12 @@ decisionTree=function(binaryPath, interval, trainMin, perPosID, whistleMin, clic
     }
     
   }
+  
+  counts = table(allEvents$eventID)
+  rmEvts=as.numeric(rownames(counts[counts>=3]))
+  
+  allEvents=allEvents[allEvents$eventID %in% rmEvts,]
+  
   
   return(allEvents)
 }
